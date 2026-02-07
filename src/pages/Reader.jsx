@@ -21,7 +21,7 @@ function Reader() {
   if (!chapter?.data) {
     return (
       <div className="text-center py-12">
-        <p className="text-white">Chapter not found.</p>
+        <p className="text-sidewalk-grey">Chapter not found.</p>
       </div>
     );
   }
@@ -36,14 +36,14 @@ function Reader() {
         </title>
       </Helmet>
 
-      <div className="space-y-3 sm:space-y-4 px-2 sm:px-4 lg:px-8">
+      <div className="space-y-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
+          <h1 className="text-xl sm:text-2xl font-bold text-black-feather">
             {chapterData.title || `Chapter ${chapterData.chapter_number}`}
           </h1>
           <button
             onClick={() => navigate(-1)}
-            className="px-3 sm:px-4 py-2 text-sm sm:text-base glass-effect text-white rounded-lg hover:bg-silver-grass/30 transition-all w-full sm:w-auto border border-silver-grass/40"
+            className="px-4 py-2 text-sm bg-white border border-quarzo text-black-feather rounded-lg hover:bg-quarzo/30 transition-all shadow-sm"
           >
             Back
           </button>
@@ -57,7 +57,7 @@ function Reader() {
                 key={page.id || page.page_number}
                 src={page.image_url}
                 alt={`Page ${page.page_number}`}
-                className="w-full h-auto rounded-lg shadow-md mx-auto block"
+                className="w-full h-auto rounded-lg shadow-sm mx-auto block border border-quarzo"
                 loading="lazy"
               />
             ))}
@@ -68,4 +68,3 @@ function Reader() {
 }
 
 export default Reader;
-
