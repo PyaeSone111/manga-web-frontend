@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed';
 import { seriesApi } from '../../services/api';
-import SeriesCard from '../series/SeriesCard';
+import { MangaCard } from '../series/cards/index.jsx';
 
 function RecentlyViewedCarousel() {
   const { items: recentItems } = useRecentlyViewed();
@@ -46,7 +46,7 @@ function RecentlyViewedCarousel() {
       <div className="flex gap-3 overflow-x-auto overflow-y-hidden pb-2 -mx-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:thin]">
         {displayItems.map((item) => (
           <div key={item.slug ?? item.id} className="flex-shrink-0 w-[140px] sm:w-[160px] snap-start">
-            <SeriesCard series={item} layout="vertical" />
+            <MangaCard series={item} section="recently_viewed" />
           </div>
         ))}
       </div>

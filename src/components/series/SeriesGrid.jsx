@@ -1,4 +1,6 @@
 import SeriesCard from './SeriesCard';
+import { MangaCard } from './cards/index.jsx';
+import { useBranding } from '../../context/BrandingContext';
 
 const DEFAULT_COLS_V = { default: 2, sm: 3, md: 4, lg: 5, xl: 6 };
 const DEFAULT_COLS_H = { default: 1, sm: 1, md: 2, lg: 3, xl: 4 };
@@ -51,9 +53,15 @@ function SkeletonCard({ isVertical }) {
   );
 }
 
-function SeriesGrid({ series = [], loading = false, layout = 'vertical', onEdit, onDelete }) {
-  const isVertical = layout === 'vertical';
-  const columnsConfig = isVertical ? DEFAULT_COLS_V : DEFAULT_COLS_H;
+function SeriesGrid({ series = [], loading = false, layout = 'vertical', section, onEdit, onDelete }) {
+  const { gridColumns, cardLayout } = useBranding();
+  const useDesignCards = Boolean(section);
+  const isVertical = useDesignCards
+    ? (cardLayout[section] || '').replace('card_', '') <= 10
+    : layout === 'vertical';
+  const columnsConfig = useDesignCards && gridColumns?.[section]
+    ? gridColumns[section]
+    : isVertical ? DEFAULT_COLS_V : DEFAULT_COLS_H;
   const gridClass = getGridClass(columnsConfig);
 
   if (loading) {
@@ -70,6 +78,21 @@ function SeriesGrid({ series = [], loading = false, layout = 'vertical', onEdit,
     return (
       <div className="text-center py-12">
         <p className="text-sidewalk-grey text-sm">No series found.</p>
+      </div>
+    );
+  }
+
+  if (useDesignCards) {
+    return (
+      <div className={gridClass}>
+        {series.map((item, index) => (
+          <MangaCard
+            key={item.id}
+            series={item}
+            section={section}
+            rank={index + 1}
+          />
+        ))}
       </div>
     );
   }

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { chapterApi } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { formatChapterLabel } from '../utils/helpers';
 
 function Reader() {
   const { seriesSlug, chapterNumber } = useParams();
@@ -32,14 +33,14 @@ function Reader() {
     <>
       <Helmet>
         <title>
-          {chapterData.title || `Chapter ${chapterData.chapter_number}`} - Manga Web
+          {chapterData.title || formatChapterLabel(chapterData.chapter_number)} - Myangar
         </title>
       </Helmet>
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
           <h1 className="text-xl sm:text-2xl font-bold text-black-feather">
-            {chapterData.title || `Chapter ${chapterData.chapter_number}`}
+            {chapterData.title || formatChapterLabel(chapterData.chapter_number)}
           </h1>
           <button
             onClick={() => navigate(-1)}

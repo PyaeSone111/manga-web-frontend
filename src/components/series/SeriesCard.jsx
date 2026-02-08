@@ -24,16 +24,10 @@ const ratingStyle = {
 
 function StatusBadge({ status }) {
   const s = String(status || '').toLowerCase();
-  const map = {
-    ongoing: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-    completed: { bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' },
-    hiatus: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
-  };
-  const style = map[s] || map.ongoing;
   const label = s.charAt(0).toUpperCase() + s.slice(1) || 'Ongoing';
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${style.bg} ${style.text} ${style.border}`}>
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#2e4b4e] text-white border border-[#2e4b4e]">
       {label}
     </span>
   );
@@ -106,13 +100,18 @@ function SeriesCard({ series, layout = 'vertical', onEdit, onDelete }) {
     : totalViews >= 1e3 ? `${(totalViews / 1e3).toFixed(1)}K`
     : String(totalViews);
 
+  const formatChNum = (n) => {
+    const num = Number(n);
+    if (Number.isNaN(num)) return String(n);
+    return num % 1 === 0 ? String(Math.round(num)) : String(num);
+  };
   const lastTwoChapters = series.last_two_chapters ?? series.latest_chapters;
   const chaptersLabel = Array.isArray(lastTwoChapters) && lastTwoChapters.length > 0
     ? lastTwoChapters
         .slice(0, 2)
-        .map((ch) => (typeof ch === 'object' ? `Ch.${ch.chapter_number ?? ch.number ?? ch.id}` : ch))
+        .map((ch) => (typeof ch === 'object' ? `Chapter - ${formatChNum(ch.chapter_number ?? ch.number ?? ch.id)}` : ch))
         .join(', ')
-    : totalChapters > 0 ? `${totalChapters} Chapters` : null;
+    : totalChapters > 0 ? `Chapter - ${formatChNum(totalChapters)}` : null;
 
   const handleClick = (e) => {
     if (e.target.closest('button') || e.target.closest('[role="menu"]')) return;

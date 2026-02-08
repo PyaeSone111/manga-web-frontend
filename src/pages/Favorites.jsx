@@ -29,7 +29,7 @@ function Favorites() {
   return (
     <>
       <Helmet>
-        <title>My Favorites - Manga Web</title>
+        <title>My Favorites - Myangar</title>
       </Helmet>
 
       <div className="space-y-6">
@@ -51,9 +51,9 @@ function Favorites() {
           </div>
         ) : (
           <SeriesGrid
+            section="favorites"
             series={series}
             loading={isLoading}
-            layout="horizontal"
           />
         )}
       </div>

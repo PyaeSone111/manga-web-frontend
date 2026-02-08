@@ -38,7 +38,7 @@ function Rankings() {
   return (
     <>
       <Helmet>
-        <title>Rankings - Manga Web</title>
+        <title>Rankings - Myangar</title>
         <meta name="description" content="Discover top-ranked manga, most read series, and trending titles." />
       </Helmet>
 
@@ -94,9 +94,9 @@ function Rankings() {
           </div>
         ) : (
           <SeriesGrid
+            section={activeTab === 'top' ? 'rankings_top' : activeTab === 'reading' ? 'rankings_most_read' : 'rankings_trending'}
             series={series}
             loading={isLoading}
-            layout="horizontal"
           />
         )}
       </div>

@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { seriesApi, rankingsApi } from '../services/api';
+import { useEffect } from 'react';
+import { dashboardApi } from '../services/api';
+import { useBranding } from '../context/BrandingContext';
 import SeriesGrid from '../components/series/SeriesGrid';
 import HeroBanner from '../components/home/HeroBanner';
 import RecentlyViewedCarousel from '../components/home/RecentlyViewedCarousel';
+import GoogleAd from '../components/common/GoogleAd';
 
 function SectionHeader({ title, linkTo, linkText = 'View All' }) {
   return (
@@ -25,30 +28,31 @@ function SectionHeader({ title, linkTo, linkText = 'View All' }) {
 }
 
 function Home() {
-  const { data: latest, isLoading: latestLoading } = useQuery({
-    queryKey: ['series', 'latest'],
-    queryFn: () => seriesApi.getLatest({ limit: 12 }),
+  const { updateBranding } = useBranding();
+
+  // Single consolidated API call for all homepage data
+  const { data: dashboard, isLoading } = useQuery({
+    queryKey: ['dashboard', 'home'],
+    queryFn: () => dashboardApi.getHomepage({ limit: 12 }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const { data: newSeries, isLoading: newLoading } = useQuery({
-    queryKey: ['series', 'new'],
-    queryFn: () => seriesApi.getNew({ limit: 12 }),
-  });
+  // Update branding cache when dashboard loads
+  useEffect(() => {
+    if (dashboard?.data?.branding) {
+      updateBranding(dashboard.data.branding);
+    }
+  }, [dashboard, updateBranding]);
 
-  const { data: trending, isLoading: trendingLoading } = useQuery({
-    queryKey: ['rankings', 'trending', 'home'],
-    queryFn: () => rankingsApi.getTrending({ per_page: 12, period: 'weekly' }),
-  });
-
-  const { data: topRated, isLoading: topLoading } = useQuery({
-    queryKey: ['rankings', 'top', 'home'],
-    queryFn: () => rankingsApi.getTop({ per_page: 12 }),
-  });
+  const latest = dashboard?.data?.latest || [];
+  const newSeries = dashboard?.data?.new || [];
+  const trending = dashboard?.data?.trending || [];
+  const topRated = dashboard?.data?.top || [];
 
   return (
     <>
       <Helmet>
-        <title>Manga Web - Read Manga, Manhwa, and Manhua Online</title>
+        <title>Myangar - Read Manga, Manhwa, and Manhua Online</title>
         <meta
           name="description"
           content="Read the latest manga, manhwa, and manhua online. Browse thousands of series and enjoy high-quality reading experience."
@@ -68,9 +72,9 @@ function Home() {
           <section>
             <SectionHeader title="Latest Release" linkTo="/browse?sort=latest" linkText="View All" />
             <SeriesGrid
-              series={latest?.data || []}
-              loading={latestLoading}
-              layout="vertical"
+              series={latest}
+              loading={isLoading}
+              section="home_latest"
             />
           </section>
 
@@ -78,9 +82,9 @@ function Home() {
           <section>
             <SectionHeader title="Popular" linkTo="/rankings" linkText="See Rankings" />
             <SeriesGrid
-              series={topRated?.data || []}
-              loading={topLoading}
-              layout="horizontal"
+              series={topRated}
+              loading={isLoading}
+              section="home_popular"
             />
           </section>
 
@@ -88,9 +92,9 @@ function Home() {
           <section>
             <SectionHeader title="Weekly Highlights" linkTo="/rankings" linkText="See Rankings" />
             <SeriesGrid
-              series={trending?.data || []}
-              loading={trendingLoading}
-              layout="vertical"
+              series={trending}
+              loading={isLoading}
+              section="home_weekly_highlights"
             />
           </section>
 
@@ -98,9 +102,9 @@ function Home() {
           <section>
             <SectionHeader title="Recently Added" linkTo="/browse?sort=newest" linkText="View All" />
             <SeriesGrid
-              series={newSeries?.data || []}
-              loading={newLoading}
-              layout="horizontal"
+              series={newSeries}
+              loading={isLoading}
+              section="home_recently_added"
             />
           </section>
         </div>
@@ -108,6 +112,9 @@ function Home() {
         {/* Sidebar */}
         <aside className="lg:w-80 xl:w-96 flex-shrink-0 lg:sticky lg:top-24 lg:self-start space-y-6">
           <RecentlyViewedCarousel />
+          {import.meta.env.VITE_ADSENSE_SLOT_HOME && (
+            <GoogleAd adSlot={import.meta.env.VITE_ADSENSE_SLOT_HOME} className="my-4" />
+          )}
           <section className="bg-white rounded-xl p-4 border border-quarzo shadow-sm">
             <h3 className="text-lg font-semibold text-black-feather mb-2">Browse</h3>
             <p className="text-sm text-sidewalk-grey mb-3 leading-relaxed">
