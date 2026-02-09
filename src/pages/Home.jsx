@@ -75,16 +75,21 @@ function Home() {
               series={latest}
               loading={isLoading}
               section="home_latest"
+              adSlot={import.meta.env.VITE_ADSENSE_SLOT_CONTENT}
             />
           </section>
 
-          {/* Popular */}
+          {/* Popular - in-feed ad every 5 cards */}
           <section>
             <SectionHeader title="Popular" linkTo="/rankings" linkText="See Rankings" />
             <SeriesGrid
               series={topRated}
               loading={isLoading}
               section="home_popular"
+              adSlot={import.meta.env.VITE_ADSENSE_SLOT_INFEED}
+              adEveryNCards={5}
+              adFormat="fluid"
+              adLayoutKey="+1w+rz-i-q+3f"
             />
           </section>
 
@@ -95,6 +100,7 @@ function Home() {
               series={trending}
               loading={isLoading}
               section="home_weekly_highlights"
+              adSlot={import.meta.env.VITE_ADSENSE_SLOT_CONTENT}
             />
           </section>
 
@@ -105,6 +111,7 @@ function Home() {
               series={newSeries}
               loading={isLoading}
               section="home_recently_added"
+              adSlot={import.meta.env.VITE_ADSENSE_SLOT_CONTENT}
             />
           </section>
         </div>
